@@ -29,7 +29,7 @@ class GameScene: DIScene {
     var moves = [Move]() {
         didSet {
             
-            if let last = moves.last, last.source == last.target {
+            if let last = moves.last, last.origin == last.destination {
                 moves.removeLast()
                 return
             }
@@ -217,8 +217,8 @@ class GameScene: DIScene {
         guard let lastMove = moves.last else { return }
         
         lastMove.revert()
-        lastMove.target?.updateCards()
-        lastMove.source.updateCards(animated: true)
+        lastMove.destination?.updateCards()
+        lastMove.origin.updateCards(animated: true)
         
         moves.removeLast()
     }
@@ -276,18 +276,6 @@ class GameScene: DIScene {
         return nil
     }
     
-    private func defaultMove(move: Move, to pile: InteractivePile) -> Bool {
-        
-        if  pile.accept(cards: move.cards) {
-            move.target = pile
-            moves.append(move)
-            pile.updateCards(animated: true)
-            
-            return true
-        }
-        return false
-    }
-    
     //MARK: Interaction
     
     override func doubleTap(at location: CGPoint) {
@@ -299,12 +287,11 @@ class GameScene: DIScene {
             else { return }
         
         for pile in foundations + openCells {
-            if (defaultMove(move: move, to: pile)) {
-                run(cardPlaceSFX)
+            if pile.canAccept(cards: move.cards) {
+                makeMove(move: move, to: pile)
                 return
             }
         }
-        
         move.cancel()
     }
     
@@ -318,7 +305,6 @@ class GameScene: DIScene {
         
         move.position = location
         move.updateCards()
-        
         
         move.cards.pickUpAnimation()
         move.cards.startRotationAnimation()
@@ -338,7 +324,6 @@ class GameScene: DIScene {
         move.updateCards()
     }
     
-    
     override func endDrag(at location: CGPoint) {
         
         guard let move = currentMove else { return }
@@ -351,15 +336,17 @@ class GameScene: DIScene {
         
         guard
             let target = getInteractivePile(nodes: nodes),
-            target != move.source,
+            target != move.origin,
             target.canAccept(cards: move.cards)
             else {
                 move.cancel()
                 return
         }
-        
-        move.moveCards(target: target)
-        target.updateCards(animated: true)
+        makeMove(move: move, to: target)
+    }
+    
+    private func makeMove(move: Move, to interactivePile: InteractivePile) {
+        move.moveCards(destination: interactivePile)
         moves.append(move)
         run(cardPlaceSFX)
     }

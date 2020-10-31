@@ -13,12 +13,12 @@ class Move: Pile {
     static let KZPos : CGFloat = 100
     static let KOffset = CGSize(width: 0, height: -30)
 
-    var source: InteractivePile
-    var target: InteractivePile?
+    var origin: InteractivePile
+    var destination: InteractivePile?
     
     init(source: InteractivePile, cards: [Card], position: CGPoint) {
         
-        self.source = source
+        self.origin = source
         
         super.init(offset: Move.KOffset, position: position, texture: SKTexture.init())
         
@@ -31,18 +31,19 @@ class Move: Pile {
     }
     
     func cancel() {
-        source.add(cards: cards)
-        source.updateCards(animated: true)
+        origin.add(cards: cards)
+        origin.updateCards(animated: true)
     }
     
-    func moveCards(target: InteractivePile) {
-        self.target = target
-        target.add(cards: cards)
+    func moveCards(destination: InteractivePile) {
+        self.destination = destination
+        destination.add(cards: cards)
+        destination.updateCards(animated: true)
     }
     
     func revert() {
-        self.target?.remove(cards: cards)
-        self.source.add(cards: cards)
+        self.destination?.remove(cards: cards)
+        self.origin.add(cards: cards)
     }
 }
 
