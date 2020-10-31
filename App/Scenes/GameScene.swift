@@ -25,7 +25,7 @@ class GameScene: DIScene {
     
     var undoMoveButton : GameButton!
     var gameOverMessage: SKSpriteNode!
-    
+
     var moves = [Move]() {
         didSet {
             
@@ -194,7 +194,6 @@ class GameScene: DIScene {
         cascades.forEach {
             $0.cards.forEach { addChild($0) }
             $0.updateCards()
-            
             $0.cards.flipAnimation(delay: 0.2)
         }
         
@@ -289,6 +288,7 @@ class GameScene: DIScene {
         for pile in foundations + openCells {
             if pile.canAccept(cards: move.cards) {
                 makeMove(move: move, to: pile)
+                autoMove()
                 return
             }
         }
@@ -343,12 +343,47 @@ class GameScene: DIScene {
                 return
         }
         makeMove(move: move, to: target)
+        autoMove()
     }
     
     private func makeMove(move: Move, to interactivePile: InteractivePile) {
         move.moveCards(destination: interactivePile)
         moves.append(move)
         run(cardPlaceSFX)
+    }
+    
+    private func autoMove() {
+     
+        let lastCards = (cascades + openCells).reduce([], { $1.cards.last != nil ? $0 + [$1.cards.last!] : $0 })
+        
+        let remainingCards = (cascades + openCells).reduce([], { $0 + $1.cards })
+        
+        for lastCard in lastCards {
+    
+            let previousCardPresent = remainingCards.reduce(false, { $0 || ($1.rank.rawValue > 2 && $1.rank.rawValue == lastCard.rank.rawValue - 1 && $1.suit.color != lastCard.suit.color) })
+            
+            if (!previousCardPresent) {
+                
+                for foundation in foundations {
+                    if foundation.canAccept(cards: [lastCard]) {
+                        
+                        guard
+                            let pile = lastCard.pile as? InteractivePile,
+                            let move = pile.moveFrom(card: lastCard)
+                        else {
+                            continue
+                        }
+                        
+                        run(SKAction.sequence([SKAction.wait(forDuration: 0.2),SKAction.run {
+                            self.makeMove(move: move, to: foundation)
+                            self.autoMove()
+                        }]))
+                        
+                        return
+                    }
+                }
+            }
+        }
     }
 }
 

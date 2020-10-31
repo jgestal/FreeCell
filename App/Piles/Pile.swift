@@ -14,7 +14,7 @@ class Pile: SKSpriteNode {
     
     let offset : CGSize!
     
-    var cards = [Card]() 
+    var cards = [Card]()
     
     init(offset : CGSize, position: CGPoint, texture: SKTexture) {
         

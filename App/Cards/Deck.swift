@@ -13,12 +13,18 @@ final class Deck {
     static public func allCards() -> [Card] {
         
         var cards = [Card]()
-    
+        
+        for r in Rank.allCases {
+            for s in Suit.allCases {
+                cards.append(Card(rank: r, suit: s))
+            }
+        }
+        /*
         for s in Suit.allCases {
             for r in Rank.allCases {
                 cards.append(Card(rank: r, suit: s))
             }
-        }
+        }*/
         
         return cards
     }

@@ -34,7 +34,6 @@ final class Card: SKSpriteNode {
     
         front = SKTexture.init(imageNamed: description)        
     }
-    
     public func flip() {
         isFaceUp = !isFaceUp
         //texture = isFaceUp ? front : Card.back

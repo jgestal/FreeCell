@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "youWin.png",
+      "filename" : "gameOver.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "youWin@2x.png",
+      "filename" : "gameOver@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "youWin@3x.png",
+      "filename" : "gameOver@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

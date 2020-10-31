@@ -13,17 +13,16 @@ class Dealer {
     static func deal(seed: Int, cascades: [InteractivePile]) {
         
         let deck = FreecellGameGenerator.getDeck(seed: seed)
+        var i = 0
          
-         var i = 0
-         
-         while(!deck.isEmpty()) {
+        while(!deck.isEmpty()) {
              
-             let card = deck.getCard()!
+            let card = deck.getCard()!
              
-             let cascade = cascades[i%cascades.count]
-             cascade.add(cards: [card])
+            let cascade = cascades[i%cascades.count]
+            cascade.add(cards: [card])
              
-             i += 1
-         }
+            i += 1
+        }
      }
 }
